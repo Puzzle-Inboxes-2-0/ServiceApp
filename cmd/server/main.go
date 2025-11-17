@@ -13,6 +13,7 @@ import (
 	"golang-backend-service/internal/config"
 	"golang-backend-service/internal/database"
 	"golang-backend-service/internal/logger"
+	"golang-backend-service/internal/reputation"
 
 	_ "golang-backend-service/docs"
 
@@ -57,6 +58,18 @@ func main() {
 
 	// Set up routes
 	router := api.SetupRoutes()
+
+	// Start IP reputation aggregation service
+	reputationConfig := reputation.DefaultReputationConfig()
+	aggregationService := reputation.NewAggregationService(reputationConfig)
+	if err := aggregationService.Start(5); err != nil {
+		logger.WithFields(logrus.Fields{
+			"error": err.Error(),
+		}).Warn("Failed to start IP reputation aggregation service")
+	} else {
+		logger.Info("IP reputation aggregation service started")
+	}
+	defer aggregationService.Stop()
 
 	// Create HTTP server
 	addr := fmt.Sprintf(":%s", cfg.Server.Port)

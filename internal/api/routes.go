@@ -49,6 +49,24 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+// corsMiddleware adds CORS headers to all responses
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Allow requests from any origin (for development)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		
+		// Handle preflight requests
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		
+		next.ServeHTTP(w, r)
+	})
+}
+
 // HealthResponse represents the health check response
 type HealthResponse struct {
 	Status    string    `json:"status"`
@@ -59,6 +77,9 @@ type HealthResponse struct {
 func SetupRoutes() *mux.Router {
 	router := mux.NewRouter()
 
+	// Add CORS middleware (must be first to handle preflight requests)
+	router.Use(corsMiddleware)
+	
 	// Add metrics middleware
 	router.Use(metricsMiddleware)
 	router.Use(loggingMiddleware)
@@ -70,6 +91,20 @@ func SetupRoutes() *mux.Router {
 	router.HandleFunc("/users", getUsersHandler).Methods("GET")
 	router.HandleFunc("/users", createUserHandler).Methods("POST")
 	router.HandleFunc("/users/{id}", getUserByIDHandler).Methods("GET")
+
+	// IP Reputation endpoints
+	router.HandleFunc("/api/webhooks/stalwart/delivery-failure", processDeliveryFailureHandler).Methods("POST")
+	router.HandleFunc("/api/ips/{ip}/reputation", getIPReputationHandler).Methods("GET")
+	router.HandleFunc("/api/ips/{ip}/failures", getIPFailuresHandler).Methods("GET")
+	router.HandleFunc("/api/ips/{ip}/quarantine", quarantineIPHandler).Methods("POST")
+	router.HandleFunc("/api/ips/{ip}/dnsbl-check", checkDNSBLHandler).Methods("POST")
+	router.HandleFunc("/api/dashboard/ip-health", getIPHealthDashboardHandler).Methods("GET")
+	
+	// Testing endpoints
+	router.HandleFunc("/api/testing/simulate-failures", simulateFailuresHandler).Methods("POST")
+	router.HandleFunc("/api/testing/test-cases", getTestCasesHandler).Methods("GET")
+	router.HandleFunc("/api/testing/test-cases/{id}/run", runTestCaseHandler).Methods("POST")
+	router.HandleFunc("/api/testing/test-suite/run", runTestSuiteHandler).Methods("POST")
 
 	// Metrics endpoint for Prometheus
 	router.Handle("/metrics", promhttp.Handler())

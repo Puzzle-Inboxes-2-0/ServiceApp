@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoLang Backend Service - Quick Access</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .status {
+            background: #c6f6d5;
+            border-left: 4px solid #38a169;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .status.error {
+            background: #fed7d7;
+            border-left-color: #e53e3e;
+        }
+        
+        .status strong {
+            color: #2f855a;
+        }
+        
+        .status.error strong {
+            color: #c53030;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-card {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .link-card .title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .link-card .description {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .commands {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        .commands .comment {
+            color: #68d391;
+        }
+        
+        .commands .command {
+            color: #90cdf4;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .emoji {
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">🚀</span> GoLang Backend Service</h1>
+        <p class="subtitle">Quick access to all your development resources</p>
+        
+        <div class="status" id="status">
+            <strong id="status-text">⏳ Checking service status...</strong>
+        </div>
+        
+        <div class="section">
+            <h2>🌐 Interactive Resources</h2>
+            <div class="links">
+                <a href="http://localhost:8080/swagger/index.html" target="_blank" class="link-card">
+                    <div class="title">📚 Swagger UI</div>
+                    <div class="description">Test API endpoints interactively</div>
+                </a>
+                
+                <a href="http://localhost:8080/health" target="_blank" class="link-card">
+                    <div class="title">❤️ Health Check</div>
+                    <div class="description">Verify service is running</div>
+                </a>
+                
+                <a href="http://localhost:8080/users" target="_blank" class="link-card">
+                    <div class="title">👥 Users API</div>
+                    <div class="description">View all users (JSON)</div>
+                </a>
+                
+                <a href="http://localhost:8080/metrics" target="_blank" class="link-card">
+                    <div class="title">📊 Metrics</div>
+                    <div class="description">Prometheus monitoring data</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📖 Documentation</h2>
+            <div class="links">
+                <a href="file:///Users/Mounir/Task-Master/Codebase/golang-backend-service/INTERACTIVE_EXPLORATION.md" target="_blank" class="link-card">
+                    <div class="title">🎯 Interactive Guide</div>
+                    <div class="description">Learn by exploring</div>
+                </a>
+                
+                <a href="file:///Users/Mounir/Task-Master/Codebase/golang-backend-service/TESTING_GUIDE.md" target="_blank" class="link-card">
+                    <div class="title">🧪 Testing Guide</div>
+                    <div class="description">Complete testing documentation</div>
+                </a>
+                
+                <a href="file:///Users/Mounir/Task-Master/Codebase/golang-backend-service/README.md" target="_blank" class="link-card">
+                    <div class="title">📝 README</div>
+                    <div class="description">Project overview</div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>⌨️ Quick Commands</h2>
+            <div class="commands">
+<span class="comment"># Start services</span>
+<span class="command">./start-services.sh</span>
+
+<span class="comment"># Run automated tests</span>
+<span class="command">./test-api.sh</span>
+
+<span class="comment"># Check Docker status</span>
+<span class="command">./check-docker.sh</span>
+
+<span class="comment"># View live logs</span>
+<span class="command">/Applications/Docker.app/Contents/Resources/bin/docker compose -f Context/Data/docker-compose.yml logs -f app</span>
+
+<span class="comment"># Stop services</span>
+<span class="command">./stop-services.sh</span>
+            </div>
+        </div>
+        
+        <footer>
+            <strong>✅ Docker credentials issue has been permanently fixed!</strong><br>
+            Services running on <strong>localhost:8080</strong> | Database on <strong>localhost:5433</strong>
+        </footer>
+    </div>
+    
+    <script>
+        // Check if service is running
+        fetch('http://localhost:8080/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').className = 'status';
+                document.getElementById('status-text').innerHTML = '✅ <strong>Service is running!</strong> All systems operational.';
+            })
+            .catch(error => {
+                document.getElementById('status').className = 'status error';
+                document.getElementById('status-text').innerHTML = '❌ <strong>Service is not running.</strong> Run <code>./start-services.sh</code> to start.';
+            });
+    </script>
+</body>
+</html>
+
