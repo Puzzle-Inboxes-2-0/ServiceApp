@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Setup environment variables for IONOS IP Reservation Service
+# Copy this file to setup-env.sh and fill in your actual credentials
+# DO NOT commit setup-env.sh to git (it's in .gitignore)
+
+echo "========================================="
+echo "IONOS IP Reservation - Environment Setup"
+echo "========================================="
+echo ""
+
+# Set IONOS Token
+# Get your token from: https://cloud.ionos.com/ → Account → API Tokens
+export IONOS_TOKEN="your_ionos_api_token_here"
+
+# Database Configuration
+export DB_HOST="127.0.0.1"
+export DB_PORT="5433"
+export DB_USER="postgres"
+export DB_PASSWORD="your_database_password_here"
+export DB_NAME="mydb"
+export DB_SSLMODE="disable"
+
+# Optional: IONOS Configuration overrides
+# export IONOS_API_URL="https://api.ionos.com/cloudapi/v6"
+# export IONOS_DEFAULT_LOCATION="us/ewr"
+# export IONOS_MAX_QUOTA="50"
+
+echo "✓ Environment variables set!"
+echo ""
+echo "IONOS_TOKEN: ${IONOS_TOKEN:0:20}... (truncated)"
+echo "DB_HOST: $DB_HOST"
+echo "DB_PORT: $DB_PORT"
+echo "DB_NAME: $DB_NAME"
+echo ""
+echo "To use these variables, run:"
+echo "  source scripts/setup-env.sh"
+echo "  go run cmd/server/main.go"
+echo ""
+echo "Or in one command:"
+echo "  source scripts/setup-env.sh && go run cmd/server/main.go"
+echo ""
+echo "========================================="
+

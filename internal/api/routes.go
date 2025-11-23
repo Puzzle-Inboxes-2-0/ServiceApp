@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"golang-backend-service/internal/database"
+	"golang-backend-service/internal/ionos"
 	"golang-backend-service/internal/logger"
 
 	"github.com/gorilla/mux"
@@ -75,6 +76,11 @@ type HealthResponse struct {
 
 // SetupRoutes configures all API routes
 func SetupRoutes() *mux.Router {
+	return SetupRoutesWithDependencies(nil)
+}
+
+// SetupRoutesWithDependencies configures all API routes with optional dependencies
+func SetupRoutesWithDependencies(ionosService *ionos.Service) *mux.Router {
 	router := mux.NewRouter()
 
 	// Add CORS middleware (must be first to handle preflight requests)
@@ -99,6 +105,20 @@ func SetupRoutes() *mux.Router {
 	router.HandleFunc("/api/ips/{ip}/quarantine", quarantineIPHandler).Methods("POST")
 	router.HandleFunc("/api/ips/{ip}/dnsbl-check", checkDNSBLHandler).Methods("POST")
 	router.HandleFunc("/api/dashboard/ip-health", getIPHealthDashboardHandler).Methods("GET")
+	
+	// IP Reservation endpoints (IONOS)
+	if ionosService != nil {
+		ipHandler := NewIPReservationHandler(ionosService, logger.Log)
+		router.HandleFunc("/api/v1/ips/reserve", ipHandler.HandleReserveIPs).Methods("POST")
+		router.HandleFunc("/api/v1/ips/reserved", ipHandler.HandleListReservedIPs).Methods("GET")
+		router.HandleFunc("/api/v1/ips/reserved/{id}", ipHandler.HandleGetReservedIP).Methods("GET")
+		router.HandleFunc("/api/v1/ips/reserved/{id}/status", ipHandler.HandleUpdateIPStatus).Methods("PUT")
+		router.HandleFunc("/api/v1/ips/reserved/{id}/recheck", ipHandler.HandleRecheckBlacklist).Methods("POST")
+		router.HandleFunc("/api/v1/ips/reserved/{id}", ipHandler.HandleDeleteReservedIP).Methods("DELETE")
+		router.HandleFunc("/api/v1/ips/quota", ipHandler.HandleCheckQuota).Methods("GET")
+		router.HandleFunc("/api/v1/ips/cleanup", ipHandler.HandleCleanupBlocks).Methods("POST")
+		router.HandleFunc("/api/v1/ips/statistics", ipHandler.HandleGetStatistics).Methods("GET")
+	}
 	
 	// Testing endpoints
 	router.HandleFunc("/api/testing/simulate-failures", simulateFailuresHandler).Methods("POST")

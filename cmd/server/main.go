@@ -12,6 +12,7 @@ import (
 	"golang-backend-service/internal/api"
 	"golang-backend-service/internal/config"
 	"golang-backend-service/internal/database"
+	"golang-backend-service/internal/ionos"
 	"golang-backend-service/internal/logger"
 	"golang-backend-service/internal/reputation"
 
@@ -56,8 +57,28 @@ func main() {
 	}
 	defer database.Close()
 
+	// Initialize IONOS service if token is configured
+	var ionosService *ionos.Service
+	if cfg.Ionos.Token != "" {
+		logger.Info("Initializing IONOS IP Reservation service")
+		ionosClient := ionos.NewClient(cfg.Ionos.APIURL, cfg.Ionos.Token, logger.Log)
+		ionosService = ionos.NewService(
+			ionosClient,
+			logger.Log,
+			cfg.Ionos.DefaultLocation,
+			cfg.Ionos.MaxQuota,
+		)
+		logger.WithFields(logrus.Fields{
+			"api_url":          cfg.Ionos.APIURL,
+			"default_location": cfg.Ionos.DefaultLocation,
+			"max_quota":        cfg.Ionos.MaxQuota,
+		}).Info("IONOS service initialized")
+	} else {
+		logger.Warn("IONOS_TOKEN not configured. IP reservation endpoints will not be available.")
+	}
+
 	// Set up routes
-	router := api.SetupRoutes()
+	router := api.SetupRoutesWithDependencies(ionosService)
 
 	// Start IP reputation aggregation service
 	reputationConfig := reputation.DefaultReputationConfig()

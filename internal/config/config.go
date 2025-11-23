@@ -17,11 +17,12 @@ const (
 
 // Config holds the application configuration
 type Config struct {
-	Environment string         `mapstructure:"environment"`
-	Server      ServerConfig   `mapstructure:"server"`
-	Database    DatabaseConfig `mapstructure:"database"`
-	Logger      LoggerConfig   `mapstructure:"logging"`
+	Environment string           `mapstructure:"environment"`
+	Server      ServerConfig     `mapstructure:"server"`
+	Database    DatabaseConfig   `mapstructure:"database"`
+	Logger      LoggerConfig     `mapstructure:"logging"`
 	Monitoring  MonitoringConfig `mapstructure:"monitoring"`
+	Ionos       IonosConfig      `mapstructure:"ionos"`
 }
 
 // ServerConfig holds server configuration
@@ -61,6 +62,16 @@ type MonitoringConfig struct {
 type PrometheusConfig struct {
 	Enabled bool   `mapstructure:"enabled"`
 	Path    string `mapstructure:"path"`
+}
+
+// IonosConfig holds IONOS API configuration
+type IonosConfig struct {
+	Token                  string        `mapstructure:"token"`
+	APIURL                 string        `mapstructure:"api_url"`
+	DefaultLocation        string        `mapstructure:"default_location"`
+	DefaultReservationSize int           `mapstructure:"default_reservation_size"`
+	MaxQuota               int           `mapstructure:"max_quota"`
+	ReservationTimeout     time.Duration `mapstructure:"reservation_timeout"`
 }
 
 // Load reads and parses the configuration file

@@ -30,3 +30,11 @@ monitoring:
     enabled: ${PROMETHEUS_ENABLED:true}
     path: ${PROMETHEUS_PATH:/metrics}
 
+ionos:
+  token: ${IONOS_TOKEN:}
+  api_url: ${IONOS_API_URL:https://api.ionos.com/cloudapi/v6}
+  default_location: ${IONOS_DEFAULT_LOCATION:us/ewr}
+  default_reservation_size: ${IONOS_DEFAULT_SIZE:1}
+  max_quota: ${IONOS_MAX_QUOTA:50}
+  reservation_timeout: ${IONOS_RESERVATION_TIMEOUT:30s}
+
